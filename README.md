@@ -1,74 +1,50 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
 # KMU-ECHO-Display
+
+# 🎓 학생회 통합 디스플레이 시스템
+
+학생회에서 운영하는 **학교 행사 안내**와 **대여 시스템(빌릴게)** 정보를  
+한 화면에서 직관적으로 확인할 수 있는 통합 디스플레이입니다.
+
+---
+
+## 📌 주요 기능
+
+### 🗓️ 학교 행사 안내
+- 현재 진행 중이거나 예정된 **학교 행사 정보**를 실시간으로 확인 가능
+- 행사명, 날짜, 간단한 설명을 한눈에 파악
+- 학생들이 지나가면서도 쉽게 인지할 수 있는 UI 구성
+
+---
+
+### 📦 대여 시스템 `빌릴게`
+- 학생회에서 관리하는 **대여 가능 물품 목록** 제공
+- 각 물품별 **남은 수량**을 실시간으로 확인 가능
+- 대여 가능 여부를 즉시 판단할 수 있어 문의 및 혼선 감소
+
+---
+
+### 🔍 QR 코드 빠른 접근
+- 디스플레이에 표시된 **QR 코드**를 통해 모바일로 바로 접속
+- 별도의 검색 없이 대여 시스템 페이지 및 상세 정보 확인 가능
+- 현장 접근성과 사용자 편의성 강화
+
+---
+
+## 🎯 기대 효과
+
+- 학생회 운영 정보의 **가시성 향상**
+- 대여 관련 문의 감소 및 업무 효율 증대
+- 학생들의 행사 참여도 및 서비스 이용률 증가
+- 오프라인 공간에서 디지털 서비스로의 자연스러운 연결
+
+---
+
+## 🖥️ 활용 환경
+
+- 학생회실 앞 디스플레이
+- 행사 기간 중 안내용 대형 화면
+
+---
+
+> 본 디스플레이는 학생회 운영을 보다 효율적이고 투명하게 만들기 위한  
+> **학생 중심 정보 제공 시스템**입니다.
