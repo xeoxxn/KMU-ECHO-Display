@@ -2,9 +2,6 @@ import KMU_LOGO from "../assets/logo/KMU_LOGO.tsx";
 import { useEffect, useState } from "react";
 import WeekCard from "../cards/WeekCard.tsx";
 import getNext7Days from "./getNext7Days.ts";
-import Medicine from "../assets/logo/Medicine.tsx";
-import StockCard from "../cards/StockCard.tsx";
-import StockInfiniteSlider from "./StockAutoSlider.tsx";
 import StockAutoSlider from "./StockAutoSlider.tsx";
 
 export default function Display() {
@@ -136,7 +133,10 @@ export default function Display() {
                   빌릴게 접속
                   <br /> QR코드
                 </div>
-                <img className="w-80 h-80" src="https://placehold.co/320x343" />
+                <img
+                  className="w-80 h-80"
+                  src="src/assets/qrcode/Billilge.svg"
+                />
               </div>
               <div className="h-[718px] px-12 py-20 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
                 <div className="w-[454px] text-center justify-start text-white text-7xl font-medium [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
@@ -144,7 +144,10 @@ export default function Display() {
                   <br />
                   QR코드
                 </div>
-                <img className="w-80 h-80" src="https://placehold.co/320x342" />
+                <img
+                  className="w-80 h-80"
+                  src="src/assets/qrcode/OpenChatting.svg"
+                />
               </div>
             </div>
           </div>
