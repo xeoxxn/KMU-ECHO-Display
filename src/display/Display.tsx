@@ -77,7 +77,7 @@ export default function Display() {
         </div>
         <div className="self-stretch flex flex-col justify-start items-start gap-14">
           <div className="justify-start text-white text-8xl font-semibold ">
-            5월 학사 일정
+            {todayMonth}월 학사 일정
           </div>
           <div className="self-stretch px-12 py-20 bg-white/20 rounded-[50px] inline-flex justify-center items-center gap-10">
             {weekDays.map((item) => (

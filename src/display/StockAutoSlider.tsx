@@ -8,22 +8,19 @@ const MOVE_DURATION = 0.8;
 const PAUSE_MS = 2000;
 
 const initialStocks = [
-  { title: "감기약1", leftNum: 100 },
-  { title: "감기약2", leftNum: 20 },
-  { title: "감기약3", leftNum: 10 },
-  { title: "감기약4", leftNum: 5 },
-  { title: "감기약5", leftNum: 15 },
-  { title: "소화제1", leftNum: 50 },
-  { title: "소화제2", leftNum: 30 },
-  { title: "진통제1", leftNum: 80 },
-  { title: "진통제2", leftNum: 25 },
-  { title: "비타민", leftNum: 60 },
+  { title: "타이레놀", leftNum: 4 },
+  { title: "인공눈물", leftNum: 249 },
+  { title: "드라이기", leftNum: 3 },
+  { title: "고데기", leftNum: 5 },
+  { title: "우산", leftNum: 17 },
+  { title: "충전기", leftNum: 7 },
+  { title: "소화제", leftNum: 30 },
 ];
 
 export default function StockAutoSlider() {
   const controls = useAnimation();
-  const [queue, setQueue] = useState([...initialStocks, initialStocks[0]]);
-
+  // const [queue, setQueue] = useState([...initialStocks, initialStocks[0]]);
+  const [queue, setQueue] = useState(initialStocks);
   useEffect(() => {
     let mounted = true;
 

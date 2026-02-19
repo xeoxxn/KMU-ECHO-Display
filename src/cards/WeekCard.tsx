@@ -25,7 +25,7 @@ export default function WeekCard({
 
   return (
     <div
-      className={`inline-flex h-96 w-80 flex-col gap-12 rounded-[50px] p-7
+      className={`inline-flex h-96 w-80 flex-col gap-8 rounded-[50px] p-7
         ${isToday ? "bg-white/20" : "bg-white/10"}
       `}
     >
@@ -37,7 +37,7 @@ export default function WeekCard({
         {events.map((event, idx) => (
           <div
             key={idx}
-            className="text-white text-4xl font-medium leading-[80px]"
+            className="text-white text-4xl font-medium leading-[80px] truncate w-full"
           >
             {event}
           </div>
