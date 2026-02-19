@@ -62,16 +62,16 @@ export default function Display() {
           </div>
           <div className="self-stretch px-24 py-28 bg-white/10 rounded-[50px] inline-flex justify-center items-center gap-20">
             <img
-              className="w-[742px] h-[1005px]"
-              src="https://placehold.co/742x1005"
+              className="w-[742px] h-[1005px] opacity-50"
+              src="src/assets/poster/poster1.jpeg"
             />
             <img
               className="w-[859px] h-[1163px]"
-              src="https://placehold.co/859x1163"
+              src="src/assets/poster/poster2.jpeg"
             />
             <img
-              className="w-[742px] h-[1005px]"
-              src="https://placehold.co/742x1005"
+              className="w-[742px] h-[1005px] opacity-50"
+              src="src/assets/poster/poster3.jpeg"
             />
           </div>
         </div>
