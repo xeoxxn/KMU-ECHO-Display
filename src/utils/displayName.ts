@@ -1,5 +1,5 @@
 export function displayNameForItem(name: string) {
-  if (!(name.startsWith("케이블(") || name.startsWith("마스크 ("))) {
+  if (!(name.startsWith("케이블(") || name.startsWith("마스크"))) {
     return name;
   }
 
