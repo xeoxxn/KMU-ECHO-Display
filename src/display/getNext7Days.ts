@@ -1,4 +1,4 @@
-import type { ScheduleMap } from "../utils/Schedule.ts";
+import type { ScheduleMap } from "../utils/schedule";
 
 export type DayInfo = {
   year: number;
