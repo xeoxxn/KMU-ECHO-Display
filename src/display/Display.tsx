@@ -31,15 +31,6 @@ export default function Display() {
   const hours = now.getHours();
   const minutes = now.getMinutes();
 
-  const { data, isLoading, isError, error } = useQuery<DisplayResponse>({
-    queryKey: ["display"],
-    queryFn: getDisplay,
-    staleTime: THIRTY_MIN,
-    refetchInterval: THIRTY_MIN,
-    refetchOnWindowFocus: false,
-    retry: 1,
-  });
-
   const scheduleMap: ScheduleMap = useMemo(() => {
     if (!data?.schedules) return {};
     return normalizeSchedules(data.schedules);
