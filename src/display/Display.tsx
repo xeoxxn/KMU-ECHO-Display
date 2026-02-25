@@ -194,16 +194,6 @@ export default function Display() {
                   안내할 거 있으면 여기에 하세요
                 </div>
               </div>
-
-              {(isLoading || isError) && (
-                <div className="self-stretch px-12 py-8 bg-white/10 rounded-[30px]">
-                  <div className="text-white text-5xl font-medium">
-                    {isLoading
-                      ? "데이터 불러오는 중..."
-                      : "데이터 요청 실패 (CORS/권한/서버 설정 확인 필요)"}
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="flex justify-start items-center gap-14">
