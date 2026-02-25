@@ -205,7 +205,8 @@ export default function Display() {
                 </div>
                 <img
                   className="w-80 h-80"
-                  src="src/assets/qrcode/Billilge.svg"
+                  src="../../public/Billilge.svg"
+                  alt={"qr코드"}
                 />
               </div>
 
@@ -217,7 +218,8 @@ export default function Display() {
                 </div>
                 <img
                   className="w-80 h-80"
-                  src="src/assets/qrcode/OpenChatting.svg"
+                  src="../../public/OpenChatting.svg"
+                  alt={"오픈채팅 qr"}
                 />
               </div>
             </div>
