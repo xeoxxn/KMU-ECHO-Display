@@ -1,8 +1,8 @@
 export function displayNameForItem(name: string) {
-  if (!(name.startsWith("케이블(") || name.startsWith("마스크"))) {
-    return name;
-  }
+  const n = name.trim();
 
-  const m = name.match(/\(([^)]+)\)/);
-  return m ? m[1].trim() : name;
+  if (!(n.startsWith("케이블") || n.startsWith("마스크"))) return n;
+
+  const m = n.match(/\(([^)]+)\)/);
+  return m ? m[1].trim() : n;
 }
