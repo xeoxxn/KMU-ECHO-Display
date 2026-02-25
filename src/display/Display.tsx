@@ -8,6 +8,7 @@ import StockAutoSlider from "./StockAutoSlider.tsx";
 
 import { normalizeSchedules, type ScheduleMap } from "../utils/schedule";
 import { type DisplayResponse, getDisplay } from "../api/display.ts";
+import { displayNameForItem } from "../utils/displayName.ts";
 
 type Stock = { title: string; leftNum: number; imageUrl?: string };
 
@@ -49,7 +50,7 @@ export default function Display() {
     if (!data?.items) return [];
     return data.items
       .map((it) => ({
-        title: it.itemName,
+        title: displayNameForItem(it.itemName),
         leftNum: it.count,
         imageUrl: it.imageUrl,
       }))
@@ -68,7 +69,7 @@ export default function Display() {
   }, [isError, error]);
 
   return (
-    <div className="w-[3024px] h-[5291px] px-40 py-36 bg-gradient-to-l from-neutral-900 to-green-900 inline-flex flex-col justify-center items-center gap-36">
+    <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-green-900 inline-flex flex-col justify-center items-center gap-36">
       <div className="flex flex-col justify-start items-start gap-20">
         {/* 헤더 */}
         <div className="self-stretch inline-flex justify-between items-start">
