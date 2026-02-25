@@ -1,5 +1,5 @@
 import { motion, useAnimation } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StockCard from "../cards/StockCard";
 
 const GAP = 64;
@@ -7,21 +7,40 @@ const CARD_WIDTH = 480;
 const MOVE_DURATION = 0.8;
 const PAUSE_MS = 2000;
 
-const initialStocks = [
-  { title: "타이레놀", leftNum: 4 },
-  { title: "인공눈물", leftNum: 249 },
-  { title: "드라이기", leftNum: 3 },
-  { title: "고데기", leftNum: 5 },
-  { title: "우산", leftNum: 17 },
-  { title: "충전기", leftNum: 7 },
-  { title: "소화제", leftNum: 30 },
-];
+export type Stock = {
+  title: string;
+  leftNum: number;
+  imageUrl?: string;
+};
 
-export default function StockAutoSlider() {
+type Props = {
+  stocks: Stock[];
+};
+
+export default function StockAutoSlider({ stocks }: Props) {
   const controls = useAnimation();
-  // const [queue, setQueue] = useState([...initialStocks, initialStocks[0]]);
-  const [queue, setQueue] = useState(initialStocks);
+  const [queue, setQueue] = useState<Stock[]>(stocks ?? []);
+
+  // ✅ 동일 내용이면 리셋 방지용(간단 키)
+  const stocksKey = (stocks ?? [])
+    .map((s) => `${s.title}:${s.leftNum}:${s.imageUrl ?? ""}`)
+    .join("|");
+  const prevKeyRef = useRef<string>("");
+
   useEffect(() => {
+    if (prevKeyRef.current === stocksKey) return; // 내용 동일 → 유지
+    prevKeyRef.current = stocksKey;
+
+    setQueue(stocks ?? []);
+    controls.stop(); // 진행중 애니메이션 중단
+    controls.set({ x: 0 }); // 위치 리셋
+  }, [stocksKey, stocks, controls]);
+
+  const ready = queue.length >= 2;
+
+  useEffect(() => {
+    if (!ready) return;
+
     let mounted = true;
 
     const loop = async () => {
@@ -29,17 +48,16 @@ export default function StockAutoSlider() {
 
       while (mounted) {
         await controls.start({
-          x: -CARD_WIDTH + GAP,
+          x: -(CARD_WIDTH + GAP),
           transition: { duration: MOVE_DURATION, ease: "linear" },
         });
 
         setQueue((prev) => {
           const [first, ...rest] = prev;
-          return [...rest, first];
+          return first ? [...rest, first] : prev;
         });
 
         controls.set({ x: 0 });
-
         await new Promise((r) => setTimeout(r, PAUSE_MS));
       }
     };
@@ -48,10 +66,12 @@ export default function StockAutoSlider() {
     return () => {
       mounted = false;
     };
-  }, [controls]);
+  }, [controls, ready]);
+
+  if (!queue.length) return null;
 
   return (
-    <div className="w-full bg-white/10 rounded-[60px] overflow-hidden py-20 px-16">
+    <div className="w-full rounded-[60px] bg-white/10 overflow-hidden py-20 px-16">
       <div className="w-full overflow-hidden rounded-[60px]">
         <motion.div className="flex gap-16" animate={controls}>
           {queue.map((item, i) => (
