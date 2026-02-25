@@ -203,11 +203,7 @@ export default function Display() {
                   빌릴게 접속
                   <br /> QR코드
                 </div>
-                <img
-                  className="w-80 h-80"
-                  src="../../public/Billilge.svg"
-                  alt={"qr코드"}
-                />
+                <img className="w-80 h-80" src="/Billilge.svg" alt={"qr코드"} />
               </div>
 
               <div className="h-[718px] px-12 py-20 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
@@ -218,7 +214,7 @@ export default function Display() {
                 </div>
                 <img
                   className="w-80 h-80"
-                  src="../../public/OpenChatting.svg"
+                  src="/OpenChatting.svg"
                   alt={"오픈채팅 qr"}
                 />
               </div>
