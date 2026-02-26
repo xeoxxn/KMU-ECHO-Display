@@ -21,7 +21,7 @@ export default function Display() {
     const tick = () => setNow(new Date());
     tick();
 
-    const timer = setInterval(tick, 60_000); // ✅ 1분마다
+    const timer = setInterval(tick, 1000); // ✅ 1분마다
     return () => clearInterval(timer);
   }, []);
 
@@ -199,11 +199,11 @@ export default function Display() {
 
             <div className="flex justify-start items-center gap-14">
               <div className="w-[554px] h-[718px] px-12 py-24 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
-                <div className="text-center justify-start text-white text-7xl font-medium ">
+                <div className="text-center justify-start text-white text-7xl font-medium">
                   빌릴게 접속
                   <br /> QR코드
                 </div>
-                <img className="w-80 h-80" src="/Billilge.svg" alt={"qr코드"} />
+                <img className="w-80 h-80" src="/Notion.svg" alt={"qr코드"} />
               </div>
 
               <div className="h-[718px] px-12 py-20 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
