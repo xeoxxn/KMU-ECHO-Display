@@ -71,7 +71,7 @@ export default function PosterCarousel({
                   "relative overflow-hidden rounded-[40px]",
                   "transform-gpu transition-[transform,opacity] ease-out",
                   isCenter
-                    ? "z-10 -translate-y-6 scale-[1.14] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]"
+                    ? "z-10  scale-[1.14] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]"
                     : "scale-[0.90] opacity-45",
                 ].join(" ")}
                 style={{ transitionDuration: `${animMs}ms` }}
