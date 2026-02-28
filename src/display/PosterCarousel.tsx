@@ -6,9 +6,13 @@ type PosterItem = {
   title?: string;
 };
 
+type Phase = "idle" | "slide";
+type Slot = "left" | "center" | "right";
+type Role = "L" | "C" | "R";
+
 export default function PosterCarousel({
   posters,
-  intervalMs = 8000, // ✅ 4000 -> 8000 (넘어가는 주기 느리게)
+  intervalMs = 8000,
   animMs = 300,
 }: {
   posters: PosterItem[];
@@ -17,7 +21,10 @@ export default function PosterCarousel({
 }) {
   const len = posters.length;
   const [center, setCenter] = useState(0);
+  const [phase, setPhase] = useState<Phase>("idle");
+
   const lockRef = useRef(false);
+  const animTimeoutRef = useRef<number | null>(null);
 
   const mod = (n: number, m: number) => ((n % m) + m) % m;
 
@@ -26,14 +33,24 @@ export default function PosterCarousel({
   const prevIdx = mod(center - 1, len);
   const nextIdx = mod(center + 1, len);
 
-  const visible = useMemo(
-    () => [
-      { pos: "left" as const, poster: posters[prevIdx] },
-      { pos: "center" as const, poster: posters[center] },
-      { pos: "right" as const, poster: posters[nextIdx] },
-    ],
-    [posters, prevIdx, center, nextIdx],
-  );
+  const cards = useMemo(() => {
+    const base = {
+      L: { role: "L" as const, poster: posters[prevIdx] },
+      C: { role: "C" as const, poster: posters[center] },
+      R: { role: "R" as const, poster: posters[nextIdx] },
+    };
+
+    const slotByRole: Record<Role, Slot> =
+      phase === "idle"
+        ? { L: "left", C: "center", R: "right" }
+        : { L: "left", C: "left", R: "center" };
+
+    return (Object.keys(base) as Role[]).map((r) => ({
+      role: base[r].role,
+      poster: base[r].poster,
+      slot: slotByRole[r],
+    }));
+  }, [posters, prevIdx, center, nextIdx, phase]);
 
   useEffect(() => {
     if (len <= 1) return;
@@ -42,49 +59,81 @@ export default function PosterCarousel({
       if (lockRef.current) return;
       lockRef.current = true;
 
-      setCenter((c) => mod(c + 1, len));
+      setPhase("slide");
 
-      window.setTimeout(() => {
+      if (animTimeoutRef.current) window.clearTimeout(animTimeoutRef.current);
+      animTimeoutRef.current = window.setTimeout(() => {
+        setCenter((c) => mod(c + 1, len));
+        setPhase("idle");
         lockRef.current = false;
       }, animMs);
     }, intervalMs);
 
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearInterval(timer);
+      if (animTimeoutRef.current) window.clearTimeout(animTimeoutRef.current);
+      animTimeoutRef.current = null;
+      lockRef.current = false;
+    };
   }, [len, intervalMs, animMs]);
 
+  const slotClass = (slot: Slot) => {
+    if (slot === "center") {
+      return "z-10 opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]";
+    }
+    return "opacity-45";
+  };
+
+  const overlayClass = (slot: Slot) =>
+    slot === "center" ? "bg-black/0" : "bg-black/45";
+
+  const scaleForSlot = (slot: Slot) => (slot === "center" ? 1.14 : 0.9);
+
+  const translateXForRole = (role: Role) => {
+    if (phase !== "slide") return "0%";
+    if (role === "L") return "-140%";
+    if (role === "C") return "-115%";
+    return "-115%";
+  };
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full overflow-hidden">
       <div className="flex w-full justify-center items-center gap-20">
-        {visible.map(({ pos, poster }) => {
-          const isCenter = pos === "center";
+        {cards.map(({ role, poster, slot }) => {
+          const tx = translateXForRole(role);
+          const sc = scaleForSlot(slot);
 
           return (
             <div
-              key={`${pos}-${poster.posterId}`}
+              key={`${role}-${poster.posterId}`}
               className="flex justify-center"
             >
               <div
                 className={[
                   "relative overflow-hidden rounded-[40px]",
                   "transform-gpu transition-[transform,opacity] ease-out",
-                  isCenter
-                    ? "z-10 scale-[1.14] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]"
-                    : "scale-[0.90] opacity-45",
+                  slotClass(slot),
                 ].join(" ")}
-                style={{ transitionDuration: `${animMs}ms` }}
+                style={{
+                  transitionDuration: `${animMs}ms`,
+                  transform: `translate3d(${tx},0,0) scale(${sc})`,
+                }}
               >
                 <img
                   src={poster.imageUrl}
                   alt={poster.title ?? "poster"}
                   draggable={false}
-                  loading={isCenter ? "eager" : "lazy"}
+                  loading={slot === "center" ? "eager" : "lazy"}
                   decoding="async"
                   className="w-[742px] h-[1005px] object-cover"
+                  onError={() =>
+                    console.log("poster img error:", poster.imageUrl, poster)
+                  }
                 />
                 <div
                   className={[
                     "absolute inset-0 transition-colors",
-                    isCenter ? "bg-black/0" : "bg-black/45",
+                    overlayClass(slot),
                   ].join(" ")}
                   style={{ transitionDuration: `${animMs}ms` }}
                 />
