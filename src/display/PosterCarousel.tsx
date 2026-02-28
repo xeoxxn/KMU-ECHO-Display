@@ -13,7 +13,7 @@ type Role = "L" | "C" | "R";
 export default function PosterCarousel({
   posters,
   intervalMs = 8000,
-  animMs = 300,
+  animMs = 500, // ✅ 300 -> 500 (전환 느리게)
 }: {
   posters: PosterItem[];
   intervalMs?: number;
@@ -77,18 +77,18 @@ export default function PosterCarousel({
     };
   }, [len, intervalMs, animMs]);
 
+  // ✅ scale은 class로만 (원래 느낌 유지)
   const slotClass = (slot: Slot) => {
     if (slot === "center") {
-      return "z-10 opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]";
+      return "z-10 scale-[1.14] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]";
     }
-    return "opacity-45";
+    return "scale-[0.90] opacity-45";
   };
 
   const overlayClass = (slot: Slot) =>
     slot === "center" ? "bg-black/0" : "bg-black/45";
 
-  const scaleForSlot = (slot: Slot) => (slot === "center" ? 1.14 : 0.9);
-
+  // ✅ slide 때만 옆으로 이동 (translate만 style로)
   const translateXForRole = (role: Role) => {
     if (phase !== "slide") return "0%";
     if (role === "L") return "-140%";
@@ -101,7 +101,6 @@ export default function PosterCarousel({
       <div className="flex w-full justify-center items-center gap-20">
         {cards.map(({ role, poster, slot }) => {
           const tx = translateXForRole(role);
-          const sc = scaleForSlot(slot);
 
           return (
             <div
@@ -116,7 +115,7 @@ export default function PosterCarousel({
                 ].join(" ")}
                 style={{
                   transitionDuration: `${animMs}ms`,
-                  transform: `translate3d(${tx},0,0) scale(${sc})`,
+                  transform: `translate3d(${tx},0,0)`, // ✅ scale 제거
                 }}
               >
                 <img
@@ -126,9 +125,6 @@ export default function PosterCarousel({
                   loading={slot === "center" ? "eager" : "lazy"}
                   decoding="async"
                   className="w-[742px] h-[1005px] object-cover"
-                  onError={() =>
-                    console.log("poster img error:", poster.imageUrl, poster)
-                  }
                 />
                 <div
                   className={[
