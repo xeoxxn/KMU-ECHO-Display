@@ -22,6 +22,7 @@ export default function PosterCarousel({
   const len = posters.length;
   const [center, setCenter] = useState(0);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [snap, setSnap] = useState(false);
 
   const lockRef = useRef(false);
   const animTimeoutRef = useRef<number | null>(null);
@@ -59,13 +60,19 @@ export default function PosterCarousel({
       if (lockRef.current) return;
       lockRef.current = true;
 
+      setSnap(false);
       setPhase("slide");
 
       if (animTimeoutRef.current) window.clearTimeout(animTimeoutRef.current);
       animTimeoutRef.current = window.setTimeout(() => {
+        setSnap(true);
         setCenter((c) => mod(c + 1, len));
         setPhase("idle");
-        lockRef.current = false;
+
+        requestAnimationFrame(() => {
+          setSnap(false);
+          lockRef.current = false;
+        });
       }, animMs);
     }, intervalMs);
 
@@ -87,43 +94,59 @@ export default function PosterCarousel({
   const overlayClass = (slot: Slot) =>
     slot === "center" ? "bg-black/0" : "bg-black/45";
 
+  const translateXForRole = (role: Role) => {
+    if (phase !== "slide") return "0px";
+    return "calc(-100% - 5rem)";
+  };
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full overflow-hidden">
       <div className="flex w-full justify-center items-center gap-20">
-        {cards.map(({ role, poster, slot }) => (
-          <div
-            key={`${role}-${poster.posterId}`}
-            className="flex justify-center"
-          >
+        {cards.map(({ role, poster, slot }) => {
+          const tx = translateXForRole(role);
+
+          return (
             <div
+              key={`${role}-${poster.posterId}`}
               className={[
-                "relative overflow-hidden rounded-[40px]",
-                "transform-gpu transition-[transform,opacity] ease-out",
-                slotClass(slot),
+                "flex justify-center transform-gpu",
+                snap ? "" : "transition-transform ease-out",
               ].join(" ")}
-              style={{ transitionDuration: `${animMs}ms` }}
+              style={{
+                transitionDuration: snap ? "0ms" : `${animMs}ms`,
+                transform: `translate3d(${tx},0,0)`,
+              }}
             >
-              <img
-                src={poster.imageUrl}
-                alt={poster.title ?? "poster"}
-                draggable={false}
-                loading={slot === "center" ? "eager" : "lazy"}
-                decoding="async"
-                className="w-[742px] h-[1005px] object-cover"
-                onError={() =>
-                  console.log("poster img error:", poster.imageUrl, poster)
-                }
-              />
               <div
                 className={[
-                  "absolute inset-0 transition-colors",
-                  overlayClass(slot),
+                  "relative overflow-hidden rounded-[40px]",
+                  "transform-gpu transition-[transform,opacity] ease-out",
+                  slotClass(slot),
                 ].join(" ")}
                 style={{ transitionDuration: `${animMs}ms` }}
-              />
+              >
+                <img
+                  src={poster.imageUrl}
+                  alt={poster.title ?? "poster"}
+                  draggable={false}
+                  loading={slot === "center" ? "eager" : "lazy"}
+                  decoding="async"
+                  className="w-[742px] h-[1005px] object-cover"
+                  onError={() =>
+                    console.log("poster img error:", poster.imageUrl, poster)
+                  }
+                />
+                <div
+                  className={[
+                    "absolute inset-0 transition-colors",
+                    overlayClass(slot),
+                  ].join(" ")}
+                  style={{ transitionDuration: `${animMs}ms` }}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
