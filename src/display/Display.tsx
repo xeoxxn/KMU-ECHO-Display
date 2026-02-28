@@ -9,6 +9,7 @@ import StockAutoSlider from "./StockAutoSlider.tsx";
 import { normalizeSchedules, type ScheduleMap } from "../utils/schedule";
 import { type DisplayResponse, getDisplay } from "../api/display.ts";
 import { displayNameForItem } from "../utils/displayName.ts";
+import PosterCarousel from "./PosterCarousel.tsx";
 
 type Stock = { title: string; leftNum: number; imageUrl?: string };
 
@@ -105,7 +106,7 @@ export default function Display() {
           <div className="self-stretch px-24 py-28 bg-white/10 rounded-[50px] inline-flex justify-center items-center">
             {posters.length > 0 ? (
               <div className="w-full">
-                <PosterCarouselTW
+                <PosterCarousel
                   posters={posters}
                   intervalMs={4000}
                   animMs={300}
@@ -113,7 +114,7 @@ export default function Display() {
               </div>
             ) : (
               <div className="w-full">
-                <PosterCarouselTW
+                <PosterCarousel
                   posters={[
                     {
                       posterId: "local-1",
