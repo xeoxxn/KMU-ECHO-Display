@@ -9,6 +9,7 @@ import StockAutoSlider from "./StockAutoSlider.tsx";
 import { normalizeSchedules, type ScheduleMap } from "../utils/schedule";
 import { type DisplayResponse, getDisplay } from "../api/display.ts";
 import { displayNameForItem } from "../utils/displayName.ts";
+import PosterCarousel from "./PosterCarasel.tsx";
 
 type Stock = { title: string; leftNum: number; imageUrl?: string };
 
@@ -102,34 +103,34 @@ export default function Display() {
           <div className="w-109 justify-start text-white text-8xl font-semibold ">
             행사 안내
           </div>
-
-          <div className="self-stretch px-24 py-28 bg-white/10 rounded-[50px] inline-flex justify-center items-center gap-20">
+          <div className="self-stretch px-24 py-28 bg-white/10 rounded-[50px] inline-flex justify-center items-center">
             {posters.length > 0 ? (
-              posters
-                .slice(0, 3)
-                .map((p) => (
-                  <img
-                    key={p.posterId}
-                    className="w-[742px] h-[1005px] object-cover opacity-90"
-                    src={p.imageUrl}
-                    alt={p.title}
-                  />
-                ))
+              <div className="w-full">
+                <PosterCarousel
+                  posters={posters}
+                  intervalMs={4000}
+                  animMs={300}
+                />
+              </div>
             ) : (
-              <>
-                <img
-                  className="w-[742px] h-[1005px] object-cover opacity-50"
-                  src="src/assets/poster/poster1.jpeg"
+              <div className="w-full">
+                <PosterCarousel
+                  posters={[
+                    {
+                      posterId: "local-1",
+                      imageUrl: "src/assets/poster/poster1.jpeg",
+                    },
+                    {
+                      posterId: "local-2",
+                      imageUrl: "src/assets/poster/poster2.jpeg",
+                    },
+                    {
+                      posterId: "local-3",
+                      imageUrl: "src/assets/poster/poster3.jpeg",
+                    },
+                  ]}
                 />
-                <img
-                  className="w-[859px] h-[1163px] object-cover"
-                  src="src/assets/poster/poster2.jpeg"
-                />
-                <img
-                  className="w-[742px] h-[1005px] object-cover opacity-50"
-                  src="src/assets/poster/poster3.jpeg"
-                />
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -175,24 +176,27 @@ export default function Display() {
 
           <div className="self-stretch px-28 py-14 bg-white/10 rounded-[50px] inline-flex justify-between items-center">
             <div className="w-[1168px] inline-flex flex-col justify-start items-start gap-10">
+              <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] flex flex-col gap-10">
+                <div className="flex justify-between items-center">
+                  <div className="text-white text-7xl font-medium">
+                    복지물품 대여 시간
+                  </div>
+                  <div className="text-white text-6xl font-medium">
+                    14:00 ~ 18:00
+                  </div>
+                </div>
+
+                <div className="text-white text-6xl font-medium">
+                  점심시간 (12:00~13:00) 제외
+                </div>
+              </div>
+
               <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] inline-flex justify-between items-center">
-                <div className="justify-start text-white text-7xl font-medium">
-                  복지물품 대여 시간
+                <div className="text-white text-6xl font-medium">
+                  소프트웨어융합대학 교학팀
                 </div>
-                <div className="justify-start text-white text-6xl font-medium">
-                  14:00 ~ 18:00
-                </div>
-              </div>
-
-              <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] inline-flex justify-start items-center gap-20">
-                <div className="justify-start text-white text-7xl font-medium">
-                  안내할 거 있으면 여기에 하세요
-                </div>
-              </div>
-
-              <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] inline-flex justify-start items-center gap-20">
-                <div className="justify-start text-white text-7xl font-medium">
-                  안내할 거 있으면 여기에 하세요
+                <div className="text-white text-6xl font-medium">
+                  02-910-5047
                 </div>
               </div>
             </div>
