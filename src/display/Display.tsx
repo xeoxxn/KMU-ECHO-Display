@@ -9,7 +9,6 @@ import StockAutoSlider from "./StockAutoSlider.tsx";
 import { normalizeSchedules, type ScheduleMap } from "../utils/schedule";
 import { type DisplayResponse, getDisplay } from "../api/display.ts";
 import { displayNameForItem } from "../utils/displayName.ts";
-import PosterCarousel from "./PosterCarasel.tsx";
 
 type Stock = { title: string; leftNum: number; imageUrl?: string };
 
@@ -103,34 +102,34 @@ export default function Display() {
           <div className="w-109 justify-start text-white text-8xl font-semibold ">
             행사 안내
           </div>
-          <div className="self-stretch px-24 py-28 bg-white/10 rounded-[50px] inline-flex justify-center items-center">
+
+          <div className="self-stretch px-24 py-28 bg-white/10 rounded-[50px] inline-flex justify-center items-center gap-20">
             {posters.length > 0 ? (
-              <div className="w-full">
-                <PosterCarousel
-                  posters={posters}
-                  intervalMs={4000}
-                  animMs={300}
-                />
-              </div>
+              posters
+                .slice(0, 3)
+                .map((p) => (
+                  <img
+                    key={p.posterId}
+                    className="w-[742px] h-[1005px] object-cover opacity-90"
+                    src={p.imageUrl}
+                    alt={p.title}
+                  />
+                ))
             ) : (
-              <div className="w-full">
-                <PosterCarousel
-                  posters={[
-                    {
-                      posterId: "local-1",
-                      imageUrl: "src/assets/poster/poster1.jpeg",
-                    },
-                    {
-                      posterId: "local-2",
-                      imageUrl: "src/assets/poster/poster2.jpeg",
-                    },
-                    {
-                      posterId: "local-3",
-                      imageUrl: "src/assets/poster/poster3.jpeg",
-                    },
-                  ]}
+              <>
+                <img
+                  className="w-[742px] h-[1005px] object-cover opacity-50"
+                  src="src/assets/poster/poster1.jpeg"
                 />
-              </div>
+                <img
+                  className="w-[859px] h-[1163px] object-cover"
+                  src="src/assets/poster/poster2.jpeg"
+                />
+                <img
+                  className="w-[742px] h-[1005px] object-cover opacity-50"
+                  src="src/assets/poster/poster3.jpeg"
+                />
+              </>
             )}
           </div>
         </div>
