@@ -6,13 +6,9 @@ type PosterItem = {
   title?: string;
 };
 
-type Phase = "idle" | "slide";
-type Slot = "left" | "center" | "right";
-type Role = "L" | "C" | "R";
-
 export default function PosterCarousel({
   posters,
-  intervalMs = 4000,
+  intervalMs = 8000, // ✅ 4000 -> 8000 (넘어가는 주기 느리게)
   animMs = 300,
 }: {
   posters: PosterItem[];
@@ -21,10 +17,7 @@ export default function PosterCarousel({
 }) {
   const len = posters.length;
   const [center, setCenter] = useState(0);
-  const [phase, setPhase] = useState<Phase>("idle");
-
   const lockRef = useRef(false);
-  const animTimeoutRef = useRef<number | null>(null);
 
   const mod = (n: number, m: number) => ((n % m) + m) % m;
 
@@ -33,24 +26,14 @@ export default function PosterCarousel({
   const prevIdx = mod(center - 1, len);
   const nextIdx = mod(center + 1, len);
 
-  const cards = useMemo(() => {
-    const base = {
-      L: { role: "L" as const, poster: posters[prevIdx] },
-      C: { role: "C" as const, poster: posters[center] },
-      R: { role: "R" as const, poster: posters[nextIdx] },
-    };
-
-    const slotByRole: Record<Role, Slot> =
-      phase === "idle"
-        ? { L: "left", C: "center", R: "right" }
-        : { L: "left", C: "left", R: "center" };
-
-    return (Object.keys(base) as Role[]).map((r) => ({
-      role: base[r].role,
-      poster: base[r].poster,
-      slot: slotByRole[r],
-    }));
-  }, [posters, prevIdx, center, nextIdx, phase]);
+  const visible = useMemo(
+    () => [
+      { pos: "left" as const, poster: posters[prevIdx] },
+      { pos: "center" as const, poster: posters[center] },
+      { pos: "right" as const, poster: posters[nextIdx] },
+    ],
+    [posters, prevIdx, center, nextIdx],
+  );
 
   useEffect(() => {
     if (len <= 1) return;
@@ -59,81 +42,49 @@ export default function PosterCarousel({
       if (lockRef.current) return;
       lockRef.current = true;
 
-      setPhase("slide");
+      setCenter((c) => mod(c + 1, len));
 
-      if (animTimeoutRef.current) window.clearTimeout(animTimeoutRef.current);
-      animTimeoutRef.current = window.setTimeout(() => {
-        setCenter((c) => mod(c + 1, len));
-        setPhase("idle");
+      window.setTimeout(() => {
         lockRef.current = false;
       }, animMs);
     }, intervalMs);
 
-    return () => {
-      window.clearInterval(timer);
-      if (animTimeoutRef.current) window.clearTimeout(animTimeoutRef.current);
-      animTimeoutRef.current = null;
-      lockRef.current = false;
-    };
+    return () => window.clearInterval(timer);
   }, [len, intervalMs, animMs]);
 
-  const slotClass = (slot: Slot) => {
-    if (slot === "center") {
-      return "z-10 opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]";
-    }
-    return "opacity-45";
-  };
-
-  const overlayClass = (slot: Slot) =>
-    slot === "center" ? "bg-black/0" : "bg-black/45";
-
-  const scaleFor = (slot: Slot) => (slot === "center" ? 1.14 : 0.9);
-
-  // ✅ slide 중에만 이동(동시에 커지고/작아지고 + 옆으로 이동)
-  const translateForRole = (role: Role) => {
-    if (phase !== "slide") return "0%";
-    // L: 더 왼쪽으로 빠짐, C: 왼쪽 자리로, R: 가운데 자리로
-    if (role === "L") return "-140%";
-    if (role === "C") return "-115%";
-    return "-115%";
-  };
-
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full">
       <div className="flex w-full justify-center items-center gap-20">
-        {cards.map(({ role, poster, slot }) => {
-          const scale = scaleFor(slot);
-          const tx = translateForRole(role);
+        {visible.map(({ pos, poster }) => {
+          const isCenter = pos === "center";
 
           return (
             <div
-              key={`${role}-${poster.posterId}`}
+              key={`${pos}-${poster.posterId}`}
               className="flex justify-center"
             >
               <div
                 className={[
                   "relative overflow-hidden rounded-[40px]",
-                  "transform-gpu transition-[transform,opacity] ease-[cubic-bezier(0.22,0.61,0.36,1)]",
-                  slotClass(slot),
+                  "transform-gpu transition-[transform,opacity] ease-out",
+                  isCenter
+                    ? "z-10 scale-[1.14] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]"
+                    : "scale-[0.90] opacity-45",
                 ].join(" ")}
-                style={{
-                  transitionDuration: `${animMs}ms`,
-                  transform: `translate3d(${tx},0,0) scale(${scale})`,
-                }}
+                style={{ transitionDuration: `${animMs}ms` }}
               >
                 <img
                   src={poster.imageUrl}
                   alt={poster.title ?? "poster"}
                   draggable={false}
-                  loading={slot === "center" ? "eager" : "lazy"}
+                  loading={isCenter ? "eager" : "lazy"}
                   decoding="async"
                   className="w-[742px] h-[1005px] object-cover"
                 />
-
                 <div
                   className={[
                     "absolute inset-0 transition-colors",
-                    overlayClass(slot),
+                    isCenter ? "bg-black/0" : "bg-black/45",
                   ].join(" ")}
                   style={{ transitionDuration: `${animMs}ms` }}
                 />
