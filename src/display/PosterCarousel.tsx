@@ -96,6 +96,7 @@ export default function PosterCarousel({
 
   const translateXForRole = (role: Role) => {
     if (phase !== "slide") return "0px";
+    if (role === "L") return "calc(-200% - 10rem)";
     return "calc(-100% - 5rem)";
   };
 
