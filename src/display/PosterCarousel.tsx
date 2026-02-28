@@ -86,7 +86,7 @@ export default function PosterCarousel({
 
   const slotClass = (slot: Slot) => {
     if (slot === "center") {
-      return "z-10 scale-[1.14] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]";
+      return "z-10 scale-[1] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]";
     }
     return "scale-[0.90] opacity-45";
   };
