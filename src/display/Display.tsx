@@ -174,7 +174,7 @@ export default function Display() {
             </div>
           </div>
 
-          <div className="self-stretch px-28 py-14 bg-white/10 rounded-[50px] inline-flex justify-between items-center">
+          <div className="self-stretch px-28 py-14 bg-white/10 rounded-[50px] inline-flex justify-between items-start">
             <div className="w-[1168px] inline-flex flex-col justify-start items-start gap-10">
               <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] flex flex-col gap-10">
                 <div className="flex justify-between items-center">
