@@ -57,7 +57,6 @@ export default function PosterCarousel({
 
   return (
     <div className="relative w-full">
-      {/* ✅ 3칸 고정 배치: 항상 동시에 3개 보임 */}
       <div className="flex w-full justify-center items-center gap-20">
         {visible.map(({ pos, poster }) => {
           const isCenter = pos === "center";
@@ -83,7 +82,7 @@ export default function PosterCarousel({
                   draggable={false}
                   loading={isCenter ? "eager" : "lazy"}
                   decoding="async"
-                  className="w-[820px] h-[1110px] object-cover"
+                  className="w-[742px] h-[1005px] object-cover"
                   onError={() =>
                     console.log("poster img error:", poster.imageUrl, poster)
                   }
