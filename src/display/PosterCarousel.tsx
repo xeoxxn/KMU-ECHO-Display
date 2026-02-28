@@ -12,8 +12,8 @@ type Role = "L" | "C" | "R";
 
 export default function PosterCarousel({
   posters,
-  intervalMs = 8000,
-  animMs = 500, // ✅ 300 -> 500 (전환 느리게)
+  intervalMs = 4000,
+  animMs = 300,
 }: {
   posters: PosterItem[];
   intervalMs?: number;
@@ -77,7 +77,6 @@ export default function PosterCarousel({
     };
   }, [len, intervalMs, animMs]);
 
-  // ✅ scale은 class로만 (원래 느낌 유지)
   const slotClass = (slot: Slot) => {
     if (slot === "center") {
       return "z-10 scale-[1.14] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.45)]";
@@ -88,55 +87,43 @@ export default function PosterCarousel({
   const overlayClass = (slot: Slot) =>
     slot === "center" ? "bg-black/0" : "bg-black/45";
 
-  // ✅ slide 때만 옆으로 이동 (translate만 style로)
-  const translateXForRole = (role: Role) => {
-    if (phase !== "slide") return "0%";
-    if (role === "L") return "-140%";
-    if (role === "C") return "-115%";
-    return "-115%";
-  };
-
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full">
       <div className="flex w-full justify-center items-center gap-20">
-        {cards.map(({ role, poster, slot }) => {
-          const tx = translateXForRole(role);
-
-          return (
+        {cards.map(({ role, poster, slot }) => (
+          <div
+            key={`${role}-${poster.posterId}`}
+            className="flex justify-center"
+          >
             <div
-              key={`${role}-${poster.posterId}`}
-              className="flex justify-center"
+              className={[
+                "relative overflow-hidden rounded-[40px]",
+                "transform-gpu transition-[transform,opacity] ease-out",
+                slotClass(slot),
+              ].join(" ")}
+              style={{ transitionDuration: `${animMs}ms` }}
             >
+              <img
+                src={poster.imageUrl}
+                alt={poster.title ?? "poster"}
+                draggable={false}
+                loading={slot === "center" ? "eager" : "lazy"}
+                decoding="async"
+                className="w-[742px] h-[1005px] object-cover"
+                onError={() =>
+                  console.log("poster img error:", poster.imageUrl, poster)
+                }
+              />
               <div
                 className={[
-                  "relative overflow-hidden rounded-[40px]",
-                  "transform-gpu transition-[transform,opacity] ease-out",
-                  slotClass(slot),
+                  "absolute inset-0 transition-colors",
+                  overlayClass(slot),
                 ].join(" ")}
-                style={{
-                  transitionDuration: `${animMs}ms`,
-                  transform: `translate3d(${tx},0,0)`, // ✅ scale 제거
-                }}
-              >
-                <img
-                  src={poster.imageUrl}
-                  alt={poster.title ?? "poster"}
-                  draggable={false}
-                  loading={slot === "center" ? "eager" : "lazy"}
-                  decoding="async"
-                  className="w-[742px] h-[1005px] object-cover"
-                />
-                <div
-                  className={[
-                    "absolute inset-0 transition-colors",
-                    overlayClass(slot),
-                  ].join(" ")}
-                  style={{ transitionDuration: `${animMs}ms` }}
-                />
-              </div>
+                style={{ transitionDuration: `${animMs}ms` }}
+              />
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );
