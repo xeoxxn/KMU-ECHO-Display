@@ -91,7 +91,7 @@ export default function PosterCarousel({
             return (
               <div
                 key={`${poster.posterId}-${idx}`}
-                className="flex-shrink-0 relative rounded-[40px] overflow-hidden"
+                className="flex-shrink-0 relative overflow-hidden"
                 style={{ width: CARD_WIDTH }}
               >
                 <div
