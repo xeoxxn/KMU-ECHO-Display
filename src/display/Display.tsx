@@ -187,7 +187,7 @@ export default function Display() {
                   </div>
                 </div>
 
-                <div className="text-white text-6xl font-medium">
+                <div className="text-white text-5xl font-medium">
                   점심시간 (12:00~13:00) 제외
                 </div>
               </div>
