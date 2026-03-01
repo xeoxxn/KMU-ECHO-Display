@@ -110,7 +110,7 @@ export default function Display() {
                 <PosterCarousel
                   posters={posters}
                   intervalMs={4000}
-                  animMs={1000}
+                  animMs={1500}
                 />
               </div>
             ) : (
