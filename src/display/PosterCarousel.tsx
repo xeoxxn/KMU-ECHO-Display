@@ -14,7 +14,7 @@ const VIEW_WIDTH = ITEM_WIDTH * 3 - GAP;
 export default function PosterCarousel({
   posters,
   intervalMs = 4000,
-  animMs = 800,
+  animMs = 1000,
 }: {
   posters: PosterItem[];
   intervalMs?: number;
