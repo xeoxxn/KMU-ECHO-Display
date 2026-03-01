@@ -79,21 +79,22 @@ export default function Display() {
               <KMU_LOGO />
             </div>
             <div className="w-[1292px] inline-flex flex-col justify-start items-start gap-10">
-              <div className="self-stretch justify-start text-white text-8xl font-semibold ">
+              <div className="self-stretch justify-start text-white text-8xl font-semibold">
                 국민대학교 | 소프트웨어융합대학
               </div>
-              <div className="self-stretch justify-start text-white text-7xl font-bold ">
+              <div className="self-stretch justify-start text-white text-7xl font-bold">
                 제 10대 학생회 ECHO
               </div>
             </div>
           </div>
 
           <div className="inline-flex flex-col justify-center items-end gap-3">
-            <div className="justify-start text-white text-7xl font-semibold ">
+            <div className="justify-start text-white text-7xl font-semibold">
               {todayMonth}월 {todayDay}일 ({dayofWeek})
             </div>
-            <div className="justify-start text-white text-[240px] font-semibold ">
-              {hours}:{String(minutes).padStart(2, "0")}
+            <div className="justify-start text-white text-[240px] font-semibold">
+              {String(hours).padStart(2, "0")}:
+              {String(minutes).padStart(2, "0")}
             </div>
           </div>
         </div>
