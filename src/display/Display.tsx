@@ -70,79 +70,74 @@ export default function Display() {
   }, [isError, error]);
 
   return (
-    <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-[#034E9D] inline-flex flex-col justify-center items-center gap-36">
-      <div className="flex flex-col justify-start items-start gap-20">
+    <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-[#034E9D] flex justify-center">
+      <div className="w-[2703px] flex flex-col gap-20">
         {/* 헤더 */}
-        <div className="self-stretch inline-flex justify-between items-start">
-          <div className="flex justify-start items-center gap-12">
+        <div className="w-full flex justify-between items-start">
+          <div className="flex items-center gap-12">
             <div className="w-60 h-60 relative overflow-hidden">
               <KMU_LOGO />
             </div>
-            <div className="w-[1292px] inline-flex flex-col justify-start items-start gap-10">
-              <div className="self-stretch justify-start text-white text-8xl font-semibold">
+            <div className="w-[1292px] flex flex-col gap-10">
+              <div className="text-white text-8xl font-semibold">
                 국민대학교 | 소프트웨어융합대학
               </div>
-              <div className="self-stretch justify-start text-white text-7xl font-bold">
+              <div className="text-white text-7xl font-bold">
                 제 10대 학생회 ECHO
               </div>
             </div>
           </div>
 
-          <div className="inline-flex flex-col justify-center items-end gap-3">
-            <div className="justify-start text-white text-7xl font-semibold">
+          <div className="flex flex-col items-end gap-3">
+            <div className="text-white text-7xl font-semibold">
               {todayMonth}월 {todayDay}일 ({dayofWeek})
             </div>
-            <div className="justify-start text-white text-[240px] font-semibold">
+            <div className="text-white text-[240px] font-semibold leading-none">
               {String(hours).padStart(2, "0")}:
               {String(minutes).padStart(2, "0")}
             </div>
           </div>
         </div>
 
-        {/* 행사 안내 (포스터) */}
-        <div className="self-stretch flex flex-col justify-start items-start gap-14">
-          <div className="w-109 justify-start text-white text-8xl font-semibold ">
-            행사 안내
-          </div>
-          <div className="self-stretch px-24 py-28 bg-white/10 rounded-[50px] inline-flex justify-center items-center">
-            {posters.length > 0 ? (
-              <div className="w-full">
-                <PosterCarousel
-                  posters={posters}
-                  intervalMs={4000}
-                  animMs={1500}
-                />
-              </div>
-            ) : (
-              <div className="w-full">
-                <PosterCarousel
-                  posters={[
-                    {
-                      posterId: "local-1",
-                      imageUrl: "src/assets/poster/poster1.jpeg",
-                    },
-                    {
-                      posterId: "local-2",
-                      imageUrl: "src/assets/poster/poster2.jpeg",
-                    },
-                    {
-                      posterId: "local-3",
-                      imageUrl: "src/assets/poster/poster3.jpeg",
-                    },
-                  ]}
-                />
-              </div>
-            )}
+        {/* 행사 안내 */}
+        <div className="w-full flex flex-col gap-14">
+          <div className="text-white text-8xl font-semibold">행사 안내</div>
+
+          <div className="w-full px-12 py-20 bg-white/10 rounded-[50px] flex justify-center items-center">
+            <div className="w-full">
+              <PosterCarousel
+                posters={
+                  posters.length > 0
+                    ? posters
+                    : [
+                        {
+                          posterId: "local-1",
+                          imageUrl: "src/assets/poster/poster1.jpeg",
+                        },
+                        {
+                          posterId: "local-2",
+                          imageUrl: "src/assets/poster/poster2.jpeg",
+                        },
+                        {
+                          posterId: "local-3",
+                          imageUrl: "src/assets/poster/poster3.jpeg",
+                        },
+                      ]
+                }
+                intervalMs={4000}
+                animMs={1500}
+              />
+            </div>
           </div>
         </div>
 
         {/* 학사 일정 */}
-        <div className="self-stretch flex flex-col justify-start items-start gap-14">
-          <div className="justify-start text-white text-8xl font-semibold ">
+        <div className="w-full flex flex-col gap-14">
+          <div className="text-white text-8xl font-semibold">
             {todayMonth}월 학사 일정
           </div>
 
-          <div className="self-stretch px-12 py-20 bg-white/20 rounded-[50px] inline-flex justify-center items-center gap-10">
+          <div className="w-full px-12 py-20 bg-white/20 rounded-[50px] flex justify-center items-center gap-10">
             {weekDays.map((item) => (
               <WeekCard
                 key={item.key}
@@ -157,27 +152,21 @@ export default function Display() {
         </div>
 
         {/* 재고 */}
-        <div className="w-[2703px] flex flex-col justify-start items-start gap-14">
-          <div className="p-2.5 inline-flex justify-center items-center gap-2.5">
-            <div className="justify-start text-white text-8xl font-semibold ">
-              복지물품 재고 현황
-            </div>
+        <div className="w-full flex flex-col gap-14">
+          <div className="text-white text-8xl font-semibold">
+            복지물품 재고 현황
           </div>
-
           <StockAutoSlider stocks={stocks} />
         </div>
 
         {/* 안내사항 */}
-        <div className="w-[2703px] flex flex-col justify-start items-start gap-14">
-          <div className="p-2.5 inline-flex justify-center items-center gap-2.5">
-            <div className="justify-start text-white text-8xl font-semibold">
-              안내사항
-            </div>
-          </div>
+        <div className="w-full flex flex-col gap-14">
+          <div className="text-white text-8xl font-semibold">안내사항</div>
 
-          <div className="self-stretch px-20 py-14 bg-white/10 rounded-[50px] inline-flex justify-between items-start">
-            <div className="w-330 inline-flex flex-col justify-start items-start gap-10">
-              <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] flex flex-col gap-10">
+          <div className="w-full px-12 py-20 bg-white/10 rounded-[50px] flex justify-between items-stretch gap-14">
+            {/* 왼쪽 */}
+            <div className="flex-1 flex flex-col gap-10">
+              <div className="w-full px-12 py-10 bg-white/10 rounded-[30px] flex flex-col gap-10">
                 <div className="flex justify-between items-center">
                   <div className="text-white text-7xl font-medium">
                     복지물품 대여 시간
@@ -192,7 +181,7 @@ export default function Display() {
                 </div>
               </div>
 
-              <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] inline-flex justify-between items-center">
+              <div className="w-full px-12 py-10 bg-white/10 rounded-[30px] flex justify-between items-center">
                 <div className="text-white text-6xl font-medium">
                   소프트웨어융합대학 교학팀
                 </div>
@@ -202,17 +191,18 @@ export default function Display() {
               </div>
             </div>
 
-            <div className="flex justify-start items-center gap-14">
-              <div className="w-[554px] h-[718px] px-12 py-24 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
-                <div className="text-center justify-start text-white text-7xl font-medium">
+            {/* 오른쪽 */}
+            <div className="flex flex-shrink-0 items-center gap-14">
+              <div className="w-[554px] h-[718px] px-12 py-24 bg-white/10 rounded-[50px] flex flex-col justify-center items-center gap-20">
+                <div className="text-center text-white text-7xl font-medium">
                   빌릴게 접속
                   <br /> QR코드
                 </div>
-                <img className="w-80 h-80" src="/Notion.svg" alt={"qr코드"} />
+                <img className="w-80 h-80" src="/Notion.svg" alt="qr코드" />
               </div>
 
-              <div className="h-[718px] px-12 py-20 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
-                <div className="w-[454px] text-center justify-start text-white text-7xl font-medium [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
+              <div className="w-[554px] h-[718px] px-12 py-20 bg-white/10 rounded-[50px] flex flex-col justify-center items-center gap-20">
+                <div className="w-[454px] text-center text-white text-7xl font-medium [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
                   학생회 오픈채팅
                   <br />
                   QR코드
@@ -220,7 +210,7 @@ export default function Display() {
                 <img
                   className="w-80 h-80"
                   src="/OpenChatting.svg"
-                  alt={"오픈채팅 qr"}
+                  alt="오픈채팅 qr"
                 />
               </div>
             </div>

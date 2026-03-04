@@ -8,7 +8,7 @@ type PosterItem = {
 
 const BASE_CARD_W = 742;
 const BASE_CARD_H = 1005;
-const BASE_GAP = 80;
+const BASE_GAP = 40;
 
 const SCALE = 1.15;
 
@@ -74,7 +74,9 @@ export default function PosterCarousel({
     };
   }, [len, intervalMs, animMs]);
 
-  const BASE_X = -ITEM_WIDTH;
+  const EDGE_CROP = Math.round(50 * SCALE); // 예: 80px(기본) * scale
+  const BASE_X = -ITEM_WIDTH - Math.floor(EDGE_CROP / 2);
+
   const translateX = BASE_X - step * ITEM_WIDTH;
   const centerIdx = step === 0 ? 2 : 3;
 
