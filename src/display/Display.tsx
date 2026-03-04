@@ -83,7 +83,7 @@ export default function Display() {
                 국민대학교 | 소프트웨어융합대학
               </div>
               <div className="self-stretch justify-start text-white text-7xl font-bold">
-                제 10대 학생회 ECHO
+                제10대 학생회 ECHO
               </div>
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function Display() {
           <div className="self-stretch px-28 py-14 bg-white/10 rounded-[50px] flex justify-between items-stretch gap-14">
             {/* 왼쪽 영역 */}
             <div className="w-[1168px] flex flex-col gap-10">
-              <div className="flex-1 px-12 py-10 bg-white/10 rounded-[30px] flex flex-col justify-center gap-10">
+              <div className="flex-1 px-12 py-10 bg-white/10 rounded-[30px] flex items-center justify-between gap-10">
                 <div className="text-white text-7xl font-medium">
                   복지물품 대여 시간
                 </div>
