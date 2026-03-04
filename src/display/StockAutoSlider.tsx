@@ -1,93 +1,107 @@
-import { motion, useAnimation } from "framer-motion";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import StockCard from "../cards/StockCard";
 
-const MOVE_DURATION = 0.8;
-const PAUSE_MS = 2000;
-
 export type Stock = { title: string; leftNum: number; imageUrl?: string };
-type Props = { stocks: Stock[] };
 
-export default function StockAutoSlider({ stocks }: Props) {
-  const controls = useAnimation();
-  const [queue, setQueue] = useState<Stock[]>(stocks ?? []);
+type Props = {
+  stocks: Stock[];
+  speed?: number; // px/sec
+  gapPx?: number; // 카드 간격(px) - tailwind gap-16이면 64
+};
 
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-  const stepRef = useRef<number>(0); // 한 칸 이동 거리(px)
+export default function StockAutoSliderVanilla({
+  stocks,
+  speed = 120,
+  gapPx = 64,
+}: Props) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number | null>(null);
 
+  const stepRef = useRef(0); // (card width + gap)
+  const totalRef = useRef(0); // step * 원본 개수
+  const xRef = useRef(0); // 현재 x
+  const lastTsRef = useRef<number | null>(null);
+
+  const items = useMemo(() => {
+    if (!stocks?.length) return [];
+    return [...stocks, ...stocks]; // 2배로 깔아 무한처럼 보이게
+  }, [stocks]);
+
+  // 카드 폭 측정해서 wrap 기준 계산
   useLayoutEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
+    const el = trackRef.current;
+    if (!el || !stocks?.length) return;
 
     const first = el.querySelector<HTMLElement>("[data-card='stock']");
     if (!first) return;
 
     const cardW = first.getBoundingClientRect().width;
 
-    // gap은 flex container의 column-gap을 읽어옴
-    const style = window.getComputedStyle(el);
-    const gap = parseFloat(style.columnGap || "0");
+    const step = cardW + gapPx;
+    stepRef.current = step;
+    totalRef.current = step * stocks.length;
 
-    stepRef.current = cardW + gap;
-  }, [queue.length]);
-
-  // stocks 바뀌면 리셋
-  useEffect(() => {
-    setQueue(stocks ?? []);
-    controls.stop();
-    controls.set({ x: 0 });
-  }, [stocks, controls]);
-
-  const ready = queue.length >= 2;
+    // 리셋
+    xRef.current = 0;
+    el.style.transform = "translate3d(0,0,0)";
+  }, [stocks.length, gapPx]);
 
   useEffect(() => {
-    if (!ready) return;
+    const el = trackRef.current;
+    if (!el || !stocks?.length) return;
 
     let mounted = true;
 
-    const loop = async () => {
-      await new Promise((r) => setTimeout(r, PAUSE_MS));
+    const loop = (ts: number) => {
+      if (!mounted) return;
 
-      while (mounted) {
-        const step = stepRef.current || 0;
-        if (!step) {
-          await new Promise((r) => setTimeout(r, 200));
-          continue;
-        }
+      if (lastTsRef.current == null) lastTsRef.current = ts;
+      const delta = ts - lastTsRef.current;
+      lastTsRef.current = ts;
 
-        await controls.start({
-          x: -step,
-          transition: { duration: MOVE_DURATION, ease: "linear" },
-        });
+      const total = totalRef.current;
+      if (total > 0) {
+        const move = (delta / 1000) * speed;
+        let next = xRef.current - move;
 
-        setQueue((prev) => {
-          const [first, ...rest] = prev;
-          return first ? [...rest, first] : prev;
-        });
+        // 한 바퀴(원본 길이)만큼 가면 되감기
+        if (next <= -total) next += total;
 
-        controls.set({ x: 0 });
-        await new Promise((r) => setTimeout(r, PAUSE_MS));
+        xRef.current = next;
+        el.style.transform = `translate3d(${next}px, 0, 0)`;
       }
+
+      rafRef.current = requestAnimationFrame(loop);
     };
 
-    loop();
+    rafRef.current = requestAnimationFrame(loop);
+
     return () => {
       mounted = false;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      lastTsRef.current = null;
     };
-  }, [controls, ready]);
+  }, [stocks.length, speed]);
 
-  if (!queue.length) return null;
+  if (!stocks?.length) return null;
 
   return (
-    <div className="w-full rounded-[60px] bg-white/10 overflow-hidden py-20 px-16">
-      <div className="w-full overflow-hidden rounded-[60px]">
-        <motion.div ref={wrapRef} className="flex gap-16" animate={controls}>
-          {queue.map((item, i) => (
-            <div key={`${item.title}-${i}`} data-card="stock">
-              <StockCard {...item} />
-            </div>
-          ))}
-        </motion.div>
+    <div className="w-full overflow-hidden rounded-[60px] bg-white/10 py-20 px-16">
+      <div
+        ref={trackRef}
+        className="flex"
+        style={{ gap: `${gapPx}px`, willChange: "transform" }}
+      >
+        {items.map((item, i) => (
+          <div
+            key={`${item.title}-${i}`}
+            data-card="stock"
+            className="shrink-0"
+          >
+            <StockCard {...item} />
+          </div>
+        ))}
       </div>
     </div>
   );
