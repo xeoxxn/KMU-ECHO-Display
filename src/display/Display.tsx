@@ -22,7 +22,7 @@ export default function Display() {
     const tick = () => setNow(new Date());
     tick();
 
-    const timer = setInterval(tick, 1000); // ✅ 1분마다
+    const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -70,7 +70,7 @@ export default function Display() {
   }, [isError, error]);
 
   return (
-    <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-green-900 inline-flex flex-col justify-center items-center gap-36">
+    <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-[#034E9D] inline-flex flex-col justify-center items-center gap-36">
       <div className="flex flex-col justify-start items-start gap-20">
         {/* 헤더 */}
         <div className="self-stretch inline-flex justify-between items-start">
