@@ -6,8 +6,16 @@ type PosterItem = {
   title?: string;
 };
 
-const CARD_WIDTH = 742;
-const GAP = 80;
+const BASE_CARD_W = 742;
+const BASE_CARD_H = 1005;
+const BASE_GAP = 80;
+
+const SCALE = 1.15;
+
+const CARD_WIDTH = Math.round(BASE_CARD_W * SCALE);
+const CARD_HEIGHT = Math.round(BASE_CARD_H * SCALE);
+const GAP = Math.round(BASE_GAP * SCALE);
+
 const ITEM_WIDTH = CARD_WIDTH + GAP;
 const VIEW_WIDTH = ITEM_WIDTH * 3 - GAP;
 
@@ -33,7 +41,7 @@ export default function PosterCarousel({
 
   const visible = useMemo(() => {
     return [-2, -1, 0, 1, 2].map((i) => posters[mod(center + i)]);
-  }, [center, posters]);
+  }, [center, posters, len]);
 
   useEffect(() => {
     if (len <= 1) return;
@@ -43,7 +51,7 @@ export default function PosterCarousel({
       lockRef.current = true;
 
       setSnap(false);
-      setStep(1); // 왼쪽으로 한 칸 애니메이션
+      setStep(1);
 
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
       timeoutRef.current = window.setTimeout(() => {
@@ -68,7 +76,6 @@ export default function PosterCarousel({
 
   const BASE_X = -ITEM_WIDTH;
   const translateX = BASE_X - step * ITEM_WIDTH;
-
   const centerIdx = step === 0 ? 2 : 3;
 
   return (
@@ -101,24 +108,22 @@ export default function PosterCarousel({
                       ? "scale-[1.04] opacity-100"
                       : "scale-90 opacity-45",
                   ].join(" ")}
-                  style={{
-                    transitionDuration: snap ? "0ms" : `${animMs}ms`,
-                  }}
+                  style={{ transitionDuration: snap ? "0ms" : `${animMs}ms` }}
                 >
                   <img
                     src={poster.imageUrl}
                     alt={poster.title ?? "poster"}
-                    className="w-[742px] h-[1005px] object-cover"
+                    className="object-cover"
+                    style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}
                     draggable={false}
                   />
+
                   <div
                     className={[
                       "absolute inset-0 transition-colors",
                       isCenter ? "bg-black/0" : "bg-black/45",
                     ].join(" ")}
-                    style={{
-                      transitionDuration: snap ? "0ms" : `${animMs}ms`,
-                    }}
+                    style={{ transitionDuration: snap ? "0ms" : `${animMs}ms` }}
                   />
                 </div>
               </div>

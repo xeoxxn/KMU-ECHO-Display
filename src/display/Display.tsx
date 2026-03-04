@@ -83,7 +83,7 @@ export default function Display() {
                 국민대학교 | 소프트웨어융합대학
               </div>
               <div className="self-stretch justify-start text-white text-7xl font-bold">
-                제10대 학생회 ECHO
+                제 10대 학생회 ECHO
               </div>
             </div>
           </div>
@@ -174,25 +174,25 @@ export default function Display() {
               안내사항
             </div>
           </div>
-          <div className="self-stretch px-28 py-14 bg-white/10 rounded-[50px] flex justify-between items-stretch gap-14">
-            {/* 왼쪽 영역 */}
-            <div className="w-[1168px] flex flex-col gap-10">
-              <div className="flex-1 px-12 py-10 bg-white/10 rounded-[30px] flex items-center justify-between gap-10">
-                <div className="text-white text-7xl font-medium">
-                  복지물품 대여 시간
-                </div>
-                <div className="text-white text-6xl font-medium">
-                  10:00 ~ 17:00
-                </div>
-              </div>
 
-              <div className="flex-1 px-12 py-10 bg-white/10 rounded-[30px] flex items-center">
-                <div className="text-white text-7xl font-medium">
+          <div className="self-stretch px-20 py-14 bg-white/10 rounded-[50px] inline-flex justify-between items-start">
+            <div className="w-330 inline-flex flex-col justify-start items-start gap-10">
+              <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] flex flex-col gap-10">
+                <div className="flex justify-between items-center">
+                  <div className="text-white text-7xl font-medium">
+                    복지물품 대여 시간
+                  </div>
+                  <div className="text-white text-6xl font-medium">
+                    10:00 ~ 17:00
+                  </div>
+                </div>
+
+                <div className="text-white w-full text-5xl font-medium text-right">
                   점심시간 (12:00~13:00) 제외
                 </div>
               </div>
 
-              <div className="flex-1 px-12 py-10 bg-white/10 rounded-[30px] flex justify-between items-center">
+              <div className="self-stretch px-12 py-10 bg-white/10 rounded-[30px] inline-flex justify-between items-center">
                 <div className="text-white text-6xl font-medium">
                   소프트웨어융합대학 교학팀
                 </div>
@@ -202,18 +202,17 @@ export default function Display() {
               </div>
             </div>
 
-            {/* 오른쪽 QR 영역 */}
-            <div className="flex gap-14">
-              <div className="w-[554px] flex flex-col justify-center items-center gap-20 px-12 py-24 bg-white/10 rounded-[50px]">
-                <div className="text-center text-white text-7xl font-medium">
+            <div className="flex justify-start items-center gap-14">
+              <div className="w-[554px] h-[718px] px-12 py-24 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
+                <div className="text-center justify-start text-white text-7xl font-medium">
                   빌릴게 접속
                   <br /> QR코드
                 </div>
-                <img className="w-80 h-80" src="/Notion.svg" alt="qr코드" />
+                <img className="w-80 h-80" src="/Notion.svg" alt={"qr코드"} />
               </div>
 
-              <div className="w-[554px] flex flex-col justify-center items-center gap-20 px-12 py-20 bg-white/10 rounded-[50px]">
-                <div className="text-center text-white text-7xl font-medium [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
+              <div className="h-[718px] px-12 py-20 bg-white/10 rounded-[50px] inline-flex flex-col justify-center items-center gap-20">
+                <div className="w-[454px] text-center justify-start text-white text-7xl font-medium [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
                   학생회 오픈채팅
                   <br />
                   QR코드
@@ -221,7 +220,7 @@ export default function Display() {
                 <img
                   className="w-80 h-80"
                   src="/OpenChatting.svg"
-                  alt="오픈채팅 qr"
+                  alt={"오픈채팅 qr"}
                 />
               </div>
             </div>
