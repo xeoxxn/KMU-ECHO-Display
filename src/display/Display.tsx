@@ -198,7 +198,7 @@ export default function Display() {
                     빌릴게 접속
                     <br /> QR코드
                   </div>
-                  <img className="w-80 h-80" src="/Notion.svg" alt="qr코드" />
+                  <img className="w-80 h-80" src="/Billilge.svg" alt="qr코드" />
                 </div>
 
                 <div className="w-[554px] h-[718px] px-12 py-20 bg-white/10 rounded-[50px] flex flex-col justify-center items-center gap-20">
