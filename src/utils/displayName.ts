@@ -10,7 +10,7 @@ export function displayNameForItem(name: string) {
 
   result = result.replace("소형", "소").replace("대형", "대");
 
-  if (result.length > 7) {
+  if (result.length > 6) {
     result = result.slice(0, 4) + "...";
   }
 
