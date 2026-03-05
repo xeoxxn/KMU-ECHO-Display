@@ -8,11 +8,9 @@ export function displayNameForItem(name: string) {
     result = m ? m[1].trim() : n;
   }
 
-  // 소형 -> 소, 대형 -> 대
   result = result.replace("소형", "소").replace("대형", "대");
 
-  // 4글자 초과면 말줄임
-  if (result.length > 4) {
+  if (result.length > 7) {
     result = result.slice(0, 4) + "...";
   }
 
