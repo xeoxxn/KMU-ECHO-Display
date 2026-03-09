@@ -13,8 +13,7 @@ import PosterCarousel from "./PosterCarousel.tsx";
 
 type Stock = { title: string; leftNum: number; imageUrl?: string };
 
-// const TEN_MIN = 10 * 60 * 1000;
-const TEN_SEC = 10 * 1000;
+const TEN_MIN = 10 * 60 * 1000;
 
 export default function Display() {
   const [now, setNow] = useState(new Date());
@@ -37,8 +36,8 @@ export default function Display() {
   const { data, isError, error } = useQuery<DisplayResponse>({
     queryKey: ["display"],
     queryFn: getDisplay,
-    staleTime: TEN_SEC,
-    refetchInterval: TEN_SEC,
+    staleTime: TEN_MIN,
+    refetchInterval: TEN_MIN,
     refetchOnWindowFocus: false,
     retry: 1,
   });
