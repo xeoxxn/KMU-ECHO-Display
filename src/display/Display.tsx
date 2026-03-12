@@ -33,7 +33,7 @@ export default function Display() {
   const hours = now.getHours();
   const minutes = now.getMinutes();
 
-  const { data, isError, error } = useQuery<DisplayResponse>({
+  const { data, isError, error, isLoading } = useQuery<DisplayResponse>({
     queryKey: ["display"],
     queryFn: getDisplay,
     staleTime: TEN_MIN,
@@ -68,7 +68,28 @@ export default function Display() {
   useEffect(() => {
     if (isError) console.error("getDisplay error:", error);
   }, [isError, error]);
+  if (isLoading) {
+    return (
+      <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-[#034E9D] flex justify-center items-center">
+        <div className="w-[2703px] flex flex-col gap-20 animate-pulse">
+          <div className="h-32 w-1/3 bg-white/20 rounded-xl" />
 
+          <div className="h-[600px] bg-white/10 rounded-[50px]" />
+
+          <div className="flex gap-10">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex-1 h-[250px] bg-white/10 rounded-3xl"
+              />
+            ))}
+          </div>
+
+          <div className="h-[300px] bg-white/10 rounded-[50px]" />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-[#034E9D] flex justify-center items-center">
       <div className="w-[2703px] flex flex-col gap-20">

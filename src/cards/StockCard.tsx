@@ -5,11 +5,14 @@ interface StockCardProps {
   leftNum: number;
   imageUrl?: string;
 }
+
 export default function StockCard({
   title,
   leftNum,
   imageUrl,
 }: StockCardProps) {
+  const displayNum = leftNum > 99 ? "99+" : leftNum;
+
   return (
     <div className="w-92 shrink-0 px-20 py-20 bg-white/20 rounded-[50px] flex justify-center items-center">
       <div className="flex flex-col items-center gap-12">
@@ -21,7 +24,7 @@ export default function StockCard({
               className="w-full h-full object-contain"
             />
           ) : (
-            <Medicine /> // fallback
+            <Medicine />
           )}
         </div>
 
@@ -31,7 +34,7 @@ export default function StockCard({
           </div>
 
           <div className="text-white text-4xl font-normal whitespace-nowrap">
-            남은 개수: {leftNum}
+            남은 개수: {displayNum}
           </div>
         </div>
       </div>
