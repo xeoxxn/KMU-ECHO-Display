@@ -1,17 +1,24 @@
+import { memo } from "react";
+import { SkeletonLine, SkeletonText } from "../components/Skeleton.tsx";
+
 interface WeekCardProps {
   year: number;
   month: number; // 1~12
   day: number; // 날짜
   events: string[];
   isToday?: boolean;
+  loading?: boolean;
 }
 
-export default function WeekCard({
+const EVENT_TEXT = "text-4xl font-medium";
+
+function WeekCard({
   year,
   month,
   day,
   events,
   isToday = false,
+  loading = false,
 }: WeekCardProps) {
   // 요일 계산 (0:일 ~ 6:토)
   const dayOfWeek = new Date(year, month - 1, day).getDay();
@@ -30,19 +37,33 @@ export default function WeekCard({
       `}
     >
       {/* 날짜 */}
-      <div className={`text-6xl font-bold ${dayColor}`}>{day}</div>
+      <SkeletonText loading={loading}>
+        <div className={`text-6xl font-bold ${dayColor}`}>{day}</div>
+      </SkeletonText>
 
       {/* 이벤트 */}
       <div className="flex flex-col gap-1 overflow-hidden">
-        {events.map((event, idx) => (
-          <div
-            key={idx}
-            className="text-white text-4xl font-medium leading-[80px] truncate w-full"
-          >
-            {event}
-          </div>
-        ))}
+        {loading
+          ? [0, 1].map((i) => (
+              // 실제 이벤트 한 줄(leading-[80px])과 같은 높이의 칸 안에 글자 높이만큼 막대
+              <div key={i} className="flex h-[80px] items-center">
+                <SkeletonLine
+                  className={`${EVENT_TEXT} w-[85%]`}
+                  rounded="rounded-xl"
+                />
+              </div>
+            ))
+          : events.map((event, idx) => (
+              <div
+                key={idx}
+                className={`${EVENT_TEXT} text-white leading-[80px] truncate w-full`}
+              >
+                {event}
+              </div>
+            ))}
       </div>
     </div>
   );
 }
+
+export default memo(WeekCard);
