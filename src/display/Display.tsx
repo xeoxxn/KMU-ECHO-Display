@@ -1,37 +1,65 @@
 import KMU_LOGO from "../assets/logo/KMU_LOGO.tsx";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import WeekCard from "../cards/WeekCard.tsx";
 import getNext7Days from "./getNext7Days.ts";
-import StockAutoSlider from "./StockAutoSlider.tsx";
+import StockAutoSlider, { type Stock } from "./StockAutoSlider.tsx";
+import PosterCarousel, {
+  PosterCarouselSkeleton,
+  type PosterItem,
+} from "./PosterCarousel.tsx";
 
 import { normalizeSchedules, type ScheduleMap } from "../utils/schedule";
 import { type DisplayResponse, getDisplay } from "../api/display.ts";
 import { displayNameForItem } from "../utils/displayName.ts";
-import PosterCarousel from "./PosterCarousel.tsx";
+import { SkeletonText } from "../components/Skeleton.tsx";
+import { useNow } from "../hooks/useNow.ts";
 
-type Stock = { title: string; leftNum: number; imageUrl?: string };
+// "src/assets/..." 문자열 경로는 dev 서버에서만 동작하고 build 후엔 404라서 import로 변경
+import poster1 from "../assets/poster/poster1.jpeg";
+import poster2 from "../assets/poster/poster2.jpeg";
+import poster3 from "../assets/poster/poster3.jpeg";
 
 const TEN_MIN = 10 * 60 * 1000;
+const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
+const SECTION_TITLE = "text-white text-8xl font-semibold";
+
+const FALLBACK_POSTERS: PosterItem[] = [
+  { posterId: "local-1", imageUrl: poster1 },
+  { posterId: "local-2", imageUrl: poster2 },
+  { posterId: "local-3", imageUrl: poster3 },
+];
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
+/**
+ * 시계만 따로 분리 — 분이 바뀔 때 이 컴포넌트만 리렌더된다.
+ * (예전엔 Display 전체가 1초마다 리렌더되면서 포스터/재고/학사일정까지 매초 다시 그렸음)
+ */
+function HeaderClock({ loading }: { loading: boolean }) {
+  const now = useNow("minute");
+
+  return (
+    <div className="flex flex-col items-end gap-3">
+      <SkeletonText loading={loading}>
+        <div className="text-white text-7xl font-semibold">
+          {now.getMonth() + 1}월 {now.getDate()}일 ({WEEK[now.getDay()]})
+        </div>
+      </SkeletonText>
+      <SkeletonText loading={loading} rounded="rounded-[40px]">
+        <div className="text-white text-[240px] font-semibold leading-none">
+          {pad2(now.getHours())}:{pad2(now.getMinutes())}
+        </div>
+      </SkeletonText>
+    </div>
+  );
+}
 
 export default function Display() {
-  const [now, setNow] = useState(new Date());
-
-  useEffect(() => {
-    const tick = () => setNow(new Date());
-    tick();
-
-    const timer = setInterval(tick, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const todayMonth = now.getMonth() + 1;
-  const todayDay = now.getDate();
-  const week = ["일", "월", "화", "수", "목", "금", "토"];
-  const dayofWeek = week[now.getDay()];
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
+  // 날짜가 바뀔 때만 리렌더 (학사 일정 / "N월 학사 일정" 용)
+  const today = useNow("day");
+  const todayMonth = today.getMonth() + 1;
 
   const { data, isLoading, isError, error } = useQuery<DisplayResponse>({
     queryKey: ["display"],
@@ -58,20 +86,19 @@ export default function Display() {
       .filter((x) => x.leftNum > 0);
   }, [data?.items]);
 
-  const posters = useMemo(() => data?.posters ?? [], [data?.posters]);
+  const posters: PosterItem[] = useMemo(() => {
+    const list = data?.posters ?? [];
+    return list.length > 0 ? list : FALLBACK_POSTERS;
+  }, [data?.posters]);
 
   const weekDays = useMemo(
-    () => getNext7Days(scheduleMap, now),
-    [scheduleMap, now],
+    () => getNext7Days(scheduleMap, today),
+    [scheduleMap, today],
   );
 
   useEffect(() => {
     if (isError) console.error("getDisplay error:", error);
   }, [isError, error]);
-
-  const SkeletonBox = ({ className = "" }: { className?: string }) => (
-    <div className={`animate-pulse rounded-[30px] bg-white/15 ${className}`} />
-  );
 
   return (
     <div className="w-full min-h-screen px-40 py-36 bg-gradient-to-l from-neutral-900 to-[#034E9D] flex justify-center items-center">
@@ -84,229 +111,151 @@ export default function Display() {
             </div>
 
             <div className="w-[1292px] flex flex-col gap-10">
-              {isLoading ? (
-                <>
-                  <SkeletonBox className="h-24 w-[900px] rounded-2xl" />
-                  <SkeletonBox className="h-20 w-[520px] rounded-2xl" />
-                </>
-              ) : (
-                <>
-                  <div className="text-white text-8xl font-semibold">
-                    국민대학교 | 소프트웨어융합대학
-                  </div>
-                  <div className="text-white text-7xl font-bold">
-                    제 10대 학생회 ECHO
-                  </div>
-                </>
-              )}
+              <SkeletonText loading={isLoading}>
+                <div className="text-white text-8xl font-semibold">
+                  국민대학교 | 소프트웨어융합대학
+                </div>
+              </SkeletonText>
+              <SkeletonText loading={isLoading}>
+                <div className="text-white text-7xl font-bold">
+                  제 10대 학생회 ECHO
+                </div>
+              </SkeletonText>
             </div>
           </div>
 
-          <div className="flex flex-col items-end gap-3">
-            {isLoading ? (
-              <>
-                <SkeletonBox className="h-20 w-[420px] rounded-2xl" />
-                <SkeletonBox className="h-52 w-[620px] rounded-2xl" />
-              </>
-            ) : (
-              <>
-                <div className="text-white text-7xl font-semibold">
-                  {todayMonth}월 {todayDay}일 ({dayofWeek})
-                </div>
-                <div className="text-white text-[240px] font-semibold leading-none">
-                  {String(hours).padStart(2, "0")}:
-                  {String(minutes).padStart(2, "0")}
-                </div>
-              </>
-            )}
-          </div>
+          <HeaderClock loading={isLoading} />
         </div>
 
         <div className="flex flex-col items-center gap-40">
           {/* 행사 안내 */}
           <div className="w-full flex flex-col gap-14">
-            {isLoading ? (
-              <SkeletonBox className="h-20 w-[420px] rounded-2xl" />
-            ) : (
-              <div className="text-white text-8xl font-semibold">행사 안내</div>
-            )}
+            <SkeletonText loading={isLoading}>
+              <div className={SECTION_TITLE}>행사 안내</div>
+            </SkeletonText>
 
             <div className="w-full px-12 py-20 bg-white/10 rounded-[50px] flex justify-center items-center">
               <div className="w-full">
-                <PosterCarousel
-                  posters={
-                    posters.length > 0
-                      ? posters
-                      : [
-                          {
-                            posterId: "local-1",
-                            imageUrl: "src/assets/poster/poster1.jpeg",
-                          },
-                          {
-                            posterId: "local-2",
-                            imageUrl: "src/assets/poster/poster2.jpeg",
-                          },
-                          {
-                            posterId: "local-3",
-                            imageUrl: "src/assets/poster/poster3.jpeg",
-                          },
-                        ]
-                  }
-                  intervalMs={4000}
-                  animMs={1500}
-                />
+                {isLoading ? (
+                  <PosterCarouselSkeleton />
+                ) : (
+                  <PosterCarousel
+                    posters={posters}
+                    intervalMs={4000}
+                    animMs={1500}
+                  />
+                )}
               </div>
             </div>
           </div>
 
           {/* 학사 일정 */}
           <div className="w-full flex flex-col gap-14">
-            {isLoading ? (
-              <SkeletonBox className="h-20 w-[520px] rounded-2xl" />
-            ) : (
-              <div className="text-white text-8xl font-semibold">
-                {todayMonth}월 학사 일정
-              </div>
-            )}
+            <SkeletonText loading={isLoading}>
+              <div className={SECTION_TITLE}>{todayMonth}월 학사 일정</div>
+            </SkeletonText>
 
             <div className="w-full px-12 py-20 bg-white/20 rounded-[50px] flex justify-center items-center gap-10">
-              {isLoading
-                ? Array.from({ length: 7 }).map((_, i) => (
-                    <SkeletonBox
-                      key={i}
-                      className="h-[420px] w-[320px] rounded-[40px]"
-                    />
-                  ))
-                : weekDays.map((item) => (
-                    <WeekCard
-                      key={item.key}
-                      year={item.year}
-                      month={item.month}
-                      day={item.day}
-                      events={item.events}
-                      isToday={item.isToday}
-                    />
-                  ))}
+              {weekDays.map((item) => (
+                <WeekCard
+                  key={item.key}
+                  year={item.year}
+                  month={item.month}
+                  day={item.day}
+                  events={item.events}
+                  isToday={item.isToday}
+                  loading={isLoading}
+                />
+              ))}
             </div>
           </div>
 
           {/* 재고 */}
           <div className="w-full flex flex-col gap-14">
-            {/* 재고 */}
-            <div className="w-full flex flex-col gap-14">
-              {isLoading ? (
-                <SkeletonBox className="h-20 w-[520px] rounded-2xl" />
-              ) : (
-                <div className="text-white text-8xl font-semibold">
-                  복지물품 재고 현황
-                </div>
-              )}
+            <SkeletonText loading={isLoading}>
+              <div className={SECTION_TITLE}>복지물품 재고 현황</div>
+            </SkeletonText>
 
-              {isLoading ? (
-                <div className="w-full overflow-hidden rounded-[60px] bg-white/10 px-16 py-20">
-                  <div className="flex gap-16">
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-[368px] h-[540px] shrink-0 px-20 py-20 bg-white/20 rounded-[50px] animate-pulse"
-                      >
-                        <div className="flex h-full w-full flex-col items-center justify-between">
-                          <div className="h-32 w-32 rounded-full bg-white/20" />
-
-                          <div className="flex w-full flex-col items-center gap-5">
-                            <div className="h-10 w-28 rounded-xl bg-white/20" />
-                            <div className="h-8 w-20 rounded-xl bg-white/20" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <StockAutoSlider stocks={stocks} />
-              )}
-            </div>
+            <StockAutoSlider stocks={stocks} loading={isLoading} />
           </div>
 
           {/* 안내사항 */}
           <div className="w-full flex flex-col gap-14">
-            {isLoading ? (
-              <SkeletonBox className="h-20 w-[360px] rounded-2xl" />
-            ) : (
-              <div className="text-white text-8xl font-semibold">안내사항</div>
-            )}
+            <SkeletonText loading={isLoading}>
+              <div className={SECTION_TITLE}>안내사항</div>
+            </SkeletonText>
 
             <div className="w-full px-12 py-20 bg-white/10 rounded-[50px] flex justify-between items-stretch gap-14">
-              {isLoading ? (
-                <>
-                  <div className="flex-1 flex flex-col gap-10">
-                    <SkeletonBox className="h-[220px] w-full rounded-[30px]" />
-                    <SkeletonBox className="h-[140px] w-full rounded-[30px]" />
-                  </div>
-
-                  <div className="flex flex-shrink-0 items-center gap-14">
-                    <SkeletonBox className="w-[554px] h-[718px] rounded-[50px]" />
-                    <SkeletonBox className="w-[554px] h-[718px] rounded-[50px]" />
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* 왼쪽 */}
-                  <div className="flex-1 flex flex-col gap-10">
-                    <div className="w-full px-12 py-10 bg-white/10 rounded-[30px] flex flex-col gap-10">
-                      <div className="flex justify-between items-center">
-                        <div className="text-white text-7xl font-medium">
-                          복지물품 대여 시간
-                        </div>
-                        <div className="text-white text-6xl font-medium">
-                          10:00 ~ 17:00
-                        </div>
-                      </div>
-
-                      <div className="text-white w-full text-5xl font-medium text-right">
-                        점심시간 (12:00~13:00) 제외
-                      </div>
-                    </div>
-
-                    <div className="w-full px-12 py-10 bg-white/10 rounded-[30px] flex justify-between items-center">
-                      <div className="text-white text-6xl font-medium">
-                        소프트웨어융합대학 교학팀
+              {/* 왼쪽 */}
+              <div className="flex-1 flex flex-col gap-10">
+                <SkeletonText
+                  loading={isLoading}
+                  className="w-full"
+                  rounded="rounded-[30px]"
+                >
+                  <div className="w-full px-12 py-10 bg-white/10 rounded-[30px] flex flex-col gap-10">
+                    <div className="flex justify-between items-center">
+                      <div className="text-white text-7xl font-medium">
+                        복지물품 대여 시간
                       </div>
                       <div className="text-white text-6xl font-medium">
-                        02-910-5047
+                        10:00 ~ 17:00
                       </div>
-                    </div>
-                  </div>
-
-                  {/* 오른쪽 */}
-                  <div className="flex flex-shrink-0 items-center gap-14">
-                    <div className="w-[554px] h-[718px] px-12 py-24 bg-white/10 rounded-[50px] flex flex-col justify-center items-center gap-20">
-                      <div className="text-center text-white text-7xl font-medium">
-                        빌릴게 접속
-                        <br /> QR코드
-                      </div>
-                      <img
-                        className="w-80 h-80"
-                        src="/Billilge.svg"
-                        alt="qr코드"
-                      />
                     </div>
 
-                    <div className="w-[554px] h-[718px] px-12 py-20 bg-white/10 rounded-[50px] flex flex-col justify-center items-center gap-20">
-                      <div className="w-[454px] text-center text-white text-7xl font-medium [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
-                        학생회 오픈채팅
-                        <br />
-                        QR코드
-                      </div>
-                      <img
-                        className="w-80 h-80"
-                        src="/OpenChatting.svg"
-                        alt="오픈채팅 qr"
-                      />
+                    <div className="text-white w-full text-5xl font-medium text-right">
+                      점심시간 (12:00~13:00) 제외
                     </div>
                   </div>
-                </>
-              )}
+                </SkeletonText>
+
+                <SkeletonText
+                  loading={isLoading}
+                  className="w-full"
+                  rounded="rounded-[30px]"
+                >
+                  <div className="w-full px-12 py-10 bg-white/10 rounded-[30px] flex justify-between items-center">
+                    <div className="text-white text-6xl font-medium">
+                      소프트웨어융합대학 교학팀
+                    </div>
+                    <div className="text-white text-6xl font-medium">
+                      02-910-5047
+                    </div>
+                  </div>
+                </SkeletonText>
+              </div>
+
+              {/* 오른쪽 */}
+              <div className="flex flex-shrink-0 items-center gap-14">
+                <SkeletonText loading={isLoading} rounded="rounded-[50px]">
+                  <div className="w-[554px] h-[718px] px-12 py-24 bg-white/10 rounded-[50px] flex flex-col justify-center items-center gap-20">
+                    <div className="text-center text-white text-7xl font-medium">
+                      빌릴게 접속
+                      <br /> QR코드
+                    </div>
+                    <img
+                      className="w-80 h-80"
+                      src="/Billilge.svg"
+                      alt="qr코드"
+                    />
+                  </div>
+                </SkeletonText>
+
+                <SkeletonText loading={isLoading} rounded="rounded-[50px]">
+                  <div className="w-[554px] h-[718px] px-12 py-20 bg-white/10 rounded-[50px] flex flex-col justify-center items-center gap-20">
+                    <div className="w-[454px] text-center text-white text-7xl font-medium [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
+                      학생회 오픈채팅
+                      <br />
+                      QR코드
+                    </div>
+                    <img
+                      className="w-80 h-80"
+                      src="/OpenChatting.svg"
+                      alt="오픈채팅 qr"
+                    />
+                  </div>
+                </SkeletonText>
+              </div>
             </div>
           </div>
         </div>
